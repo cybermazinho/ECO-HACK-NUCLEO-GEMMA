@@ -1,5 +1,7 @@
 # NÚCLEO — IA clínica onde o cuidado precisa continuar
 
+![Banner do NÚCLEO: atendimento de saúde em uma comunidade ribeirinha conectado à arquitetura local da plataforma](assets/banner-nucleo-1920x1080.png)
+
 > Plataforma portátil de apoio clínico com **Gemma 4 E4B**, projetada para funcionar localmente em comunidades remotas.
 
 [![Status](https://img.shields.io/badge/status-protótipo%20funcional-16a34a)](#status-do-projeto)
@@ -230,10 +232,10 @@ Esses valores comprovam a execução local nessa máquina, mas não representam 
 
 ```text
 app/                  API, banco de dados, integração com Gemma e análise coletiva
+assets/               imagens e recursos visuais do projeto
 data/                 dados sintéticos para demonstração
 static/               interfaces web do médico, apoiador, paciente e ficha
 requirements.txt      dependências Python
-NUCLEO_IA_Clinica_Visao_Geral.pdf
 ```
 
 ## Links
