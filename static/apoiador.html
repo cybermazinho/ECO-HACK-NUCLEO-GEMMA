@@ -1,0 +1,104 @@
+<title>NÚCLEO — Apoiador de Campo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="/static/style.css" />
+
+<div class="wrap" style="max-width:640px">
+  <header class="header">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>NÚCLEO</h1>
+        <div class="brand-eyebrow">Apoiador de campo · Registro de caso</div>
+      </div>
+    </div>
+    <div class="status-pill"><span class="status-dot"></span>100% local</div>
+  </header>
+
+  <form id="form-novo-caso" novalidate>
+    <div class="form-block">
+      <div class="review-label">Seu nome (apoiador)</div>
+      <input class="input" id="f-apoiador" placeholder="Quem está registrando este caso" required />
+    </div>
+
+    <div class="form-block">
+      <div class="review-label">Paciente</div>
+      <div class="segmented" id="segmented-paciente">
+        <button type="button" class="segmented-opt active" data-modo="existente">Já cadastrado</button>
+        <button type="button" class="segmented-opt" data-modo="novo">Novo paciente</button>
+      </div>
+
+      <div id="bloco-paciente-existente">
+        <select id="select-paciente" class="input">
+          <option value="">Selecione o paciente…</option>
+        </select>
+      </div>
+
+      <div id="bloco-paciente-novo" hidden>
+        <div class="form-row">
+          <input class="input" id="np-nome" placeholder="Nome completo" />
+          <input class="input" id="np-idade" type="number" min="0" max="130" placeholder="Idade" />
+        </div>
+        <div class="form-row">
+          <select class="input" id="np-sexo">
+            <option value="">Sexo</option>
+            <option value="F">Feminino</option>
+            <option value="M">Masculino</option>
+            <option value="Outro">Outro</option>
+          </select>
+          <input class="input" id="np-comunidade" placeholder="Comunidade" />
+        </div>
+        <input class="input" id="np-alergias" placeholder="Alergias conhecidas (opcional)" />
+      </div>
+    </div>
+
+    <div class="form-block">
+      <div class="review-label">Triagem</div>
+      <textarea class="input" id="f-queixa" placeholder="Queixa do paciente, com as palavras dele — ex: “dor de barriga forte desde ontem”" required></textarea>
+      <input class="input" id="f-sintomas" placeholder="Sintomas observados, separados por vírgula — ex: febre, diarreia, dor abdominal" />
+      <div class="form-row form-row-3">
+        <input class="input" id="f-temp" type="number" step="0.1" placeholder="Temperatura °C" />
+        <input class="input" id="f-pas" type="number" placeholder="Pressão sistólica" />
+        <input class="input" id="f-fc" type="number" placeholder="Freq. cardíaca" />
+      </div>
+    </div>
+
+    <div class="form-block">
+      <div class="review-label">Foto (opcional)</div>
+      <div class="media-row">
+        <label class="btn small media-btn" for="f-imagem">Anexar foto</label>
+        <input type="file" id="f-imagem" accept="image/*" hidden />
+        <button type="button" class="btn ghost small" id="btn-limpar-imagem" hidden>Remover foto</button>
+      </div>
+      <img id="preview-imagem" class="preview-imagem" hidden />
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn primary" id="btn-enviar-caso">Enviar para triagem</button>
+      <span class="form-hint">A IA classifica o caso agora — leva uns 15–25s.</span>
+    </div>
+
+    <div id="resultado-caso"></div>
+  </form>
+
+  <footer class="page-footer">
+    A IA organiza e sinaliza; o profissional decide.<br />
+    Esse caso vai para a fila de pendência do médico, com seu nome como responsável pelo registro.
+  </footer>
+</div>
+
+<script src="/static/triage-form.js"></script>
+<script>
+  NucleoTriageForm.init({
+    origem: "apoiador",
+    apoiadorObrigatorio: true,
+    onSuccess: (ficha) => {
+      document.getElementById("resultado-caso").innerHTML = NucleoTriageForm.resultadoCasoHTML(ficha, {
+        mostrarBotaoFila: false,
+      });
+    },
+  });
+</script>

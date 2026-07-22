@@ -1,0 +1,150 @@
+<title>NÚCLEO — Painel Clínico</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="/static/style.css" />
+
+<div class="wrap">
+  <header class="header">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>NÚCLEO</h1>
+        <div class="brand-eyebrow">Saúde digital · Edge AI · Offline</div>
+      </div>
+    </div>
+    <div class="status-pill"><span class="status-dot"></span>100% local</div>
+  </header>
+
+  <div class="stats" id="stats">
+    <div class="stat-chip" style="--chip-color: var(--critico)">
+      <div class="n" id="stat-critico">–</div>
+      <div class="label">Crítico</div>
+    </div>
+    <div class="stat-chip" style="--chip-color: var(--alto)">
+      <div class="n" id="stat-alto">–</div>
+      <div class="label">Alto</div>
+    </div>
+    <div class="stat-chip" style="--chip-color: var(--moderado)">
+      <div class="n" id="stat-moderado">–</div>
+      <div class="label">Moderado</div>
+    </div>
+    <div class="stat-chip" style="--chip-color: var(--baixo)">
+      <div class="n" id="stat-baixo">–</div>
+      <div class="label">Baixo</div>
+    </div>
+  </div>
+
+  <nav class="tabs">
+    <button class="tab" data-view="novo">+ Novo caso</button>
+    <button class="tab active" data-view="fila">
+      Fila de pendência <span class="count" id="tab-count-fila">0</span>
+    </button>
+    <button class="tab" data-view="alertas">
+      Alertas coletivos
+      <span class="count" id="tab-count-alertas">0</span>
+      <span class="badge-new" id="tab-badge-alertas" hidden></span>
+    </button>
+    <button class="tab" data-view="nutricao">
+      Apoio nutricional
+      <span class="count" id="tab-count-nutricao">0</span>
+      <span class="badge-new" id="tab-badge-nutricao" hidden></span>
+    </button>
+  </nav>
+
+  <section class="view" id="view-novo">
+    <form id="form-novo-caso" novalidate>
+      <div class="form-block">
+        <div class="review-label">Paciente</div>
+        <div class="segmented" id="segmented-paciente">
+          <button type="button" class="segmented-opt active" data-modo="existente">Já cadastrado</button>
+          <button type="button" class="segmented-opt" data-modo="novo">Novo paciente</button>
+        </div>
+
+        <div id="bloco-paciente-existente">
+          <select id="select-paciente" class="input">
+            <option value="">Selecione o paciente…</option>
+          </select>
+        </div>
+
+        <div id="bloco-paciente-novo" hidden>
+          <div class="form-row">
+            <input class="input" id="np-nome" placeholder="Nome completo" />
+            <input class="input" id="np-idade" type="number" min="0" max="130" placeholder="Idade" />
+          </div>
+          <div class="form-row">
+            <select class="input" id="np-sexo">
+              <option value="">Sexo</option>
+              <option value="F">Feminino</option>
+              <option value="M">Masculino</option>
+              <option value="Outro">Outro</option>
+            </select>
+            <input class="input" id="np-comunidade" placeholder="Comunidade" />
+          </div>
+          <input class="input" id="np-alergias" placeholder="Alergias conhecidas (opcional)" />
+        </div>
+      </div>
+
+      <div class="form-block">
+        <div class="review-label">Triagem</div>
+        <textarea class="input" id="f-queixa" placeholder="Queixa do paciente, com as palavras dele — ex: “dor de barriga forte desde ontem”" required></textarea>
+        <input class="input" id="f-sintomas" placeholder="Sintomas observados, separados por vírgula — ex: febre, diarreia, dor abdominal" />
+        <div class="form-row form-row-3">
+          <input class="input" id="f-temp" type="number" step="0.1" placeholder="Temperatura °C" />
+          <input class="input" id="f-pas" type="number" placeholder="Pressão sistólica" />
+          <input class="input" id="f-fc" type="number" placeholder="Freq. cardíaca" />
+        </div>
+      </div>
+
+      <div class="form-block">
+        <div class="review-label">Foto (opcional)</div>
+        <div class="media-row">
+          <label class="btn small media-btn" for="f-imagem">Anexar foto</label>
+          <input type="file" id="f-imagem" accept="image/*" hidden />
+          <button type="button" class="btn ghost small" id="btn-limpar-imagem" hidden>Remover foto</button>
+        </div>
+        <img id="preview-imagem" class="preview-imagem" hidden />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn primary" id="btn-enviar-caso">Enviar para triagem</button>
+        <span class="form-hint">A IA classifica o caso agora — leva uns 15–25s.</span>
+      </div>
+
+      <div id="resultado-caso"></div>
+    </form>
+  </section>
+
+  <section class="view active" id="view-fila">
+    <div class="search-row">
+      <input type="search" class="input" id="busca-fila" placeholder="Buscar por paciente, comunidade, sintoma ou queixa…" />
+    </div>
+    <div class="list" id="lista-fila">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-alertas">
+    <div class="list" id="lista-alertas">
+      <div class="skeleton"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-nutricao">
+    <div class="list" id="lista-nutricao">
+      <div class="skeleton"></div>
+    </div>
+  </section>
+
+  <footer class="page-footer">
+    A IA organiza e sinaliza; o profissional decide.<br />
+    Toda saída mostra fonte, confiança e versão do modelo — nada aqui é diagnóstico autônomo.
+  </footer>
+</div>
+
+<script src="/static/triage-form.js"></script>
+<script src="/static/app.js"></script>

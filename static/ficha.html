@@ -1,0 +1,144 @@
+<title>NÚCLEO — Ficha completa</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="/static/style.css" />
+
+<div class="wrap" style="max-width:720px">
+  <header class="header">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>NÚCLEO</h1>
+        <div class="brand-eyebrow">Ficha completa</div>
+      </div>
+    </div>
+    <a href="/" class="btn small">← Voltar ao painel</a>
+  </header>
+
+  <div id="conteudo">
+    <div class="skeleton" style="height:220px"></div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    "use strict";
+    const el = (id) => document.getElementById(id);
+
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str ?? "";
+      return div.innerHTML;
+    }
+
+    const RISK_META = {
+      critico: { label: "Crítico", color: "var(--critico)", bg: "var(--critico-dim)" },
+      alto: { label: "Alto", color: "var(--alto)", bg: "var(--alto-dim)" },
+      moderado: { label: "Moderado", color: "var(--moderado)", bg: "var(--moderado-dim)" },
+      baixo: { label: "Baixo", color: "var(--baixo)", bg: "var(--baixo-dim)" },
+    };
+
+    function foodChips(csv, classe) {
+      const itens = (csv || "").split(",").map((s) => s.trim()).filter(Boolean);
+      if (itens.length === 0) return '<span class="footer-meta">nenhum informado</span>';
+      return (
+        '<div class="food-chips">' +
+        itens.map((i) => `<span class="food-chip${classe ? " " + classe : ""}">${escapeHtml(i)}</span>`).join("") +
+        "</div>"
+      );
+    }
+
+    function vitaisHTML(f) {
+      const itens = [];
+      itens.push(`<span class="vital"><span class="k">SINTOMAS</span>${escapeHtml(f.sintomas || "não informado")}</span>`);
+      if (f.temperatura_c != null) {
+        itens.push(`<span class="vital"><span class="k">TEMP</span>${f.temperatura_c}°C</span>`);
+      } else if (f.febre_relatada) {
+        itens.push(`<span class="vital"><span class="k">FEBRE RELATADA</span>${escapeHtml(f.febre_relatada)}</span>`);
+      }
+      if (f.pressao_sistolica != null) itens.push(`<span class="vital"><span class="k">PAS</span>${f.pressao_sistolica} mmHg</span>`);
+      if (f.freq_cardiaca != null) itens.push(`<span class="vital"><span class="k">FC</span>${f.freq_cardiaca} bpm</span>`);
+      return `<div class="vitals-strip">${itens.join("")}</div>`;
+    }
+
+    async function carregar() {
+      const partes = window.location.pathname.split("/").filter(Boolean);
+      const fichaId = partes[partes.length - 1];
+
+      let f;
+      try {
+        const res = await fetch(`/fichas/${fichaId}/completa`);
+        if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+        f = await res.json();
+      } catch (err) {
+        el("conteudo").innerHTML = `<div class="state-msg error">Não foi possível carregar a ficha (${escapeHtml(String(err.message || err))}).</div>`;
+        return;
+      }
+
+      const c = f.classificacao;
+      const risk = c ? RISK_META[c.risco] || RISK_META.moderado : null;
+
+      el("conteudo").innerHTML = `
+        <div class="form-block">
+          <div class="review-label">Paciente</div>
+          <h2 style="margin:4px 0">${escapeHtml(f.paciente_nome)}</h2>
+          <p class="footer-meta">${f.idade} anos · ${escapeHtml(f.sexo)} · ${escapeHtml(f.comunidade)}</p>
+          ${f.alergias ? `<p class="footer-meta">Alergias conhecidas: ${escapeHtml(f.alergias)}</p>` : ""}
+          <p class="origem-tag">registrado por ${escapeHtml(f.origem)}${f.apoiador_nome ? " (" + escapeHtml(f.apoiador_nome) + ")" : ""} · ${new Date(f.criado_em.endsWith("Z") ? f.criado_em : f.criado_em + "Z").toLocaleString("pt-BR")}</p>
+        </div>
+
+        <div class="form-block">
+          <div class="review-label">Triagem</div>
+          <p class="card-complaint">${escapeHtml(f.queixa_texto)}</p>
+          ${vitaisHTML(f)}
+          ${f.imagem_path ? `<img class="card-thumb" src="${f.imagem_path}" alt="Foto anexada" style="max-width:320px;max-height:320px" />` : ""}
+        </div>
+
+        ${
+          c
+            ? `<div class="form-block">
+                <div class="review-label">Classificação da IA</div>
+                <div class="card-top" style="margin-bottom:8px">
+                  <span class="risk-badge" style="--risk-color:${risk.color}; --risk-bg:${risk.bg}">${risk.label}</span>
+                  <span class="specialty">${escapeHtml(c.especialidade_sugerida || "sem sugestão")}</span>
+                  <span class="readout">CONF ${c.confianca.toFixed(2)} · ${escapeHtml(c.modelo)}</span>
+                </div>
+                ${c.achado_visual ? `<p class="card-reasoning"><span class="tag">VISÃO</span>${escapeHtml(c.achado_visual)}</p>` : ""}
+                <p class="card-reasoning"><span class="tag">IA</span>${escapeHtml(c.justificativa)}</p>
+                <div class="alert-footer" style="margin-top:10px">
+                  <span class="alert-status">${escapeHtml(c.status)}</span>
+                  ${
+                    c.status === "revisado"
+                      ? `<span class="footer-meta">Corrigido para <strong>${escapeHtml(c.risco_corrigido || c.risco)}</strong>${c.obs_medico ? " — " + escapeHtml(c.obs_medico) : ""}</span>`
+                      : ""
+                  }
+                </div>
+              </div>`
+            : `<div class="state-msg">Classificação automática indisponível para esta ficha.</div>`
+        }
+
+        ${f.sugestoes_nutricionais
+          .map(
+            (s) => `
+          <div class="nutri-card ${s.status}" style="margin-bottom:12px">
+            <div class="alert-top">
+              <span class="nutri-label">Apoio nutricional</span>
+              <span class="alert-status">${escapeHtml(s.status)}</span>
+            </div>
+            <p class="alert-desc">${escapeHtml(s.recomendacao_geral)}</p>
+            <div class="mini-label">Sugeridos</div>
+            ${foodChips(s.alimentos_sugeridos)}
+            <div class="mini-label">Evitar</div>
+            ${foodChips(s.alimentos_evitar, "evitar")}
+          </div>`
+          )
+          .join("")}
+      `;
+    }
+
+    carregar();
+  })();
+</script>

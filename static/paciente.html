@@ -1,0 +1,101 @@
+<title>NÚCLEO — Autoatendimento</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="/static/style.css" />
+
+<div class="wrap" style="max-width:640px">
+  <header class="header">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>NÚCLEO</h1>
+        <div class="brand-eyebrow">Conte pra gente o que você está sentindo</div>
+      </div>
+    </div>
+    <div class="status-pill"><span class="status-dot"></span>100% local</div>
+  </header>
+
+  <form id="form-novo-caso" novalidate>
+    <div class="form-block">
+      <div class="review-label">Você já tem cadastro?</div>
+      <div class="segmented" id="segmented-paciente">
+        <button type="button" class="segmented-opt active" data-modo="existente">Já sou cadastrado</button>
+        <button type="button" class="segmented-opt" data-modo="novo">Primeira vez aqui</button>
+      </div>
+
+      <div id="bloco-paciente-existente">
+        <select id="select-paciente" class="input">
+          <option value="">Encontre seu nome…</option>
+        </select>
+      </div>
+
+      <div id="bloco-paciente-novo" hidden>
+        <div class="form-row">
+          <input class="input" id="np-nome" placeholder="Seu nome completo" />
+          <input class="input" id="np-idade" type="number" min="0" max="130" placeholder="Sua idade" />
+        </div>
+        <div class="form-row">
+          <select class="input" id="np-sexo">
+            <option value="">Sexo</option>
+            <option value="F">Feminino</option>
+            <option value="M">Masculino</option>
+            <option value="Outro">Outro</option>
+          </select>
+          <input class="input" id="np-comunidade" placeholder="Sua comunidade" />
+        </div>
+        <input class="input" id="np-alergias" placeholder="Você tem alguma alergia? (opcional)" />
+      </div>
+    </div>
+
+    <div class="form-block">
+      <div class="review-label">O que você está sentindo?</div>
+      <textarea class="input" id="f-queixa" placeholder="Conte com suas palavras — ex: “estou com dor de barriga forte desde ontem”" required></textarea>
+      <input class="input" id="f-sintomas" placeholder="Outros sintomas, separados por vírgula (opcional) — ex: tontura, tosse" />
+
+      <div class="review-label" style="margin-top:14px">Está com febre?</div>
+      <select class="input" id="f-febre">
+        <option value="nenhuma">Não estou com febre</option>
+        <option value="media">Um pouco quente / febre leve</option>
+        <option value="alta">Muito quente / febre alta</option>
+      </select>
+    </div>
+
+    <div class="form-block">
+      <div class="review-label">Quer anexar uma foto? (opcional)</div>
+      <div class="media-row">
+        <label class="btn small media-btn" for="f-imagem">Anexar foto</label>
+        <input type="file" id="f-imagem" accept="image/*" hidden />
+        <button type="button" class="btn ghost small" id="btn-limpar-imagem" hidden>Remover foto</button>
+      </div>
+      <img id="preview-imagem" class="preview-imagem" hidden />
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn primary" id="btn-enviar-caso">Enviar</button>
+      <span class="form-hint">Vai levar uns 15–25 segundos.</span>
+    </div>
+
+    <div id="resultado-caso"></div>
+  </form>
+
+  <footer class="page-footer">
+    Um profissional de saúde vai revisar o que você enviou antes de qualquer conduta.<br />
+    Isso não é um diagnóstico — é só para ajudar na organização do atendimento.
+  </footer>
+</div>
+
+<script src="/static/triage-form.js"></script>
+<script>
+  NucleoTriageForm.init({
+    origem: "paciente",
+    onSuccess: (ficha) => {
+      document.getElementById("resultado-caso").innerHTML = NucleoTriageForm.resultadoCasoHTML(ficha, {
+        mostrarBotaoFila: false,
+        mostrarClassificacao: false,
+      });
+    },
+  });
+</script>
