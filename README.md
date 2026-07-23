@@ -247,6 +247,7 @@ requirements.txt      dependências Python
 ## Links
 
 - **Repositório:** <https://github.com/cybermazinho/ECO-HACK-NUCLEO-GEMMA>
+- **Vídeo de apresentação:** <https://youtu.be/-852qC8pxgk>
 - **Demonstração pública:** <http://caad.ddns.me:8010/>
 - **Aplicação local:** <http://localhost:8010>
 
