@@ -4,6 +4,12 @@
 
 > Plataforma portátil de apoio clínico com **Gemma 4 E4B**, projetada para funcionar localmente em comunidades remotas.
 
+## Responsáveis pelo projeto
+
+- **DAVI FERNANDES MESQUITA**
+- **DANIEL DOS SANTOS DOURADO**
+- **BRYAN TORRES RIBEIRO**
+
 [![Status](https://img.shields.io/badge/status-protótipo%20funcional-16a34a)](#status-do-projeto)
 [![Modelo](https://img.shields.io/badge/modelo-Gemma%204%20E4B-7c3aed)](#gemma-4-e4b)
 [![Execução](https://img.shields.io/badge/execução-100%25%20local-0f766e)](#arquitetura)
